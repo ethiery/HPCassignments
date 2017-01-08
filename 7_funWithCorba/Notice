@@ -1,0 +1,48 @@
+All the following commands must be run from the high level directory of the project
+
+
+Compilation:
+
+idlj -fall -td . -verbose BankingApp.idl
+javac *.java BankingApp/*.java
+
+or alternatively
+
+make
+
+
+
+Execution:
+
+The easiest way is to use only one name service, running on the interbank server.
+
+Running the interbank persistant server (also the unique name service ):
+- Step 1: in a first terminal, start orbd on the port you want (> 1024)
+	orbd -ORBInitialPort 1050
+
+- Step 2: in a second terminal, launch the interbank persistant server using servertool
+	servertool -ORBInitialPort 1050
+	servertool > register -server InterbankServer -classpath .
+	servertool > quit
+
+
+
+
+
+
+Running a bank transiant server:
+- Step 1: if you're not running it on the same machine, you will have to get the hostname of the interbank server, and the port used
+
+- Step 2: launch the bank transiant server, and when prompted, enter the number of the bank
+	java BankServer -ORBInitialPort 1050 -ORBInitialHost interbankHost
+
+
+
+
+
+
+
+Running a client: indicate the port and host of the bank server
+- Step 1: if you're not running it on the same machine, you will have to get the hostname of the interbank server, and the port used
+- Step 2: launch the client
+	java Client -ORBInitialPort 1050 -ORBInitialHost interbankHost

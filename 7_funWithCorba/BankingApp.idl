@@ -1,0 +1,49 @@
+module BankingApp 
+{
+
+  struct Transaction 
+  {
+    unsigned long dstBankNo;
+    unsigned long dstAccountNo;
+    unsigned long srcBankNo;
+    unsigned long srcAccountNo;
+    unsigned long amount;
+  };
+
+  typedef sequence<Transaction> TransactionHistory;
+
+  interface Account
+  {
+    unsigned long getBalance();
+    unsigned long getAccountNo();
+    unsigned long getBankNo();
+    TransactionHistory getHistory();
+
+    void deposit(in unsigned long amount);
+    void withdraw(in unsigned long amount);
+    void transfer(in unsigned long dstBankNo, in unsigned long dstAccountNo, in unsigned long amount);
+  };
+
+  interface Bank_CustomerFacing 
+  {
+    unsigned long createAccount(in unsigned long secret);
+    Account connect(in unsigned long accountNo, in unsigned long secret);
+  };
+
+  interface Bank_InterbankFacing 
+  {
+    boolean initTransaction(in Transaction t);
+    void completeTransaction(in Transaction t);
+  };
+
+  interface Bank : Bank_CustomerFacing, Bank_InterbankFacing {};
+
+  interface Interbank 
+  {
+    void connect(in unsigned long bankNo, in Bank_InterbankFacing bank);
+
+    void requestTransaction(in unsigned long bankNo, in Transaction t);
+
+    TransactionHistory getHistory(in unsigned long bankNo);
+  };  
+};
